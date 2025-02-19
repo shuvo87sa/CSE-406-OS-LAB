@@ -1,0 +1,34 @@
+processes = [
+    {"name": "P0", "arrival": 0, "burst": 4},
+    {"name": "P1", "arrival": 1, "burst": 3},
+    {"name": "P2", "arrival": 2, "burst": 1},
+    {"name": "P3", "arrival": 3, "burst": 2},
+]
+
+def get_arrival_time(process):
+    return process["arrival"]
+
+
+processes.sort(key=get_arrival_time)
+
+completion_time = []
+turnaround_time = []
+waiting_time = []
+
+current_time = 0
+
+
+for process in processes:
+    if current_time < process["arrival"]:
+        current_time = process["arrival"]
+    current_time += process["burst"]
+    completion_time.append(current_time)
+    turnaround_time.append(completion_time[-1] - process["arrival"])
+    waiting_time.append(turnaround_time[-1] - process["burst"])
+
+# Print the results
+print("Process   Arrival    Burst     Completion   Turnaround    Waiting")
+for i, process in enumerate(processes):
+    print(f"{process['name']: <10} {process['arrival']: <10} {process['burst']: <10} "
+          f"{completion_time[i]: <12} {turnaround_time[i]: <12} {waiting_time[i]: <7}")
+
