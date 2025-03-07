@@ -1,0 +1,46 @@
+def sjf():
+    num_processes = int(input("Enter the number of processes: "))
+    
+    processes = []
+    
+    for i in range(num_processes):
+        process_id = int(input(f"Enter Process ID for process {i+1}: "))
+        burst_time = int(input(f"Enter Burst Time for process {i+1}: "))
+        arrival_time = int(input(f"Enter Arrival Time for process {i+1}: "))
+        processes.append((process_id, burst_time, arrival_time))
+    
+    processes.sort(key=lambda x: x[2])
+    
+    total_burst_time = 0
+    completed_processes = []
+    remaining_processes = processes.copy()
+    current_time = 0
+
+    print("\nProcess ID\tBurst Time\tArrival Time\tWaiting Time\tTurnaround Time\tCompletion Time")
+
+    while remaining_processes:
+        available_processes = [p for p in remaining_processes if p[2] <= current_time]
+        
+        if available_processes:
+            available_processes.sort(key=lambda x: x[1])
+            process = available_processes[0]
+            
+            process_id, burst_time, arrival_time = process
+            
+            waiting_time = current_time - arrival_time
+            if waiting_time < 0:
+                waiting_time = 0
+            
+            turnaround_time = waiting_time + burst_time
+            
+            completion_time = current_time + burst_time
+            
+            print(f"{process_id}\t\t{burst_time}\t\t{arrival_time}\t\t{waiting_time}\t\t{turnaround_time}\t\t{completion_time}")
+            
+            current_time += burst_time
+            
+            remaining_processes.remove(process)
+        else:
+            current_time += 1
+
+sjf()
