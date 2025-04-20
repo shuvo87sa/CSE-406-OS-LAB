@@ -1,0 +1,19 @@
+def fcfs_disk_scheduling(requests, head):
+    total_seek_time = 0
+    current_position = head
+    # Iterate through each request in the list and calculate seek time
+    for i in range(len(requests)):
+        total_seek_time += abs(requests[i] - current_position)
+        current_position = requests[i]
+
+    return total_seek_time
+
+
+request_sequence = [176, 79, 41, 11]
+initial_head = 50
+
+# Calculate the total seek time using the FCFS algorithm
+seek_time = fcfs_disk_scheduling(request_sequence, initial_head)
+
+# Print the result
+print("Total Seek Time:", seek_time)
