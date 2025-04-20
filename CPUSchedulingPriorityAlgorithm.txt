@@ -1,0 +1,47 @@
+process_list = [
+    [1, 10, 0, 5],
+    [2, 20, 1, 4],
+    [3, 30, 3, 2],
+    [4, 40, 4, 1]
+]
+
+def priority_scheduling(processes, time_quantum):
+    time, completed = 0, 0
+    n = len(processes)
+    remaining_queue = [p[3] for p in processes]
+    executed_order = []
+    results = []
+
+    # Sort by Arrival Time and Priority (descending)
+    processes.sort(key=lambda x: (x[2], -x[1]))
+
+    while completed < n:
+        ready_queue = [p for p in processes if p[2] <= time and remaining_queue[processes.index(p)] > 0]
+
+        if ready_queue:
+            # Sort the ready queue by Priority (descending)
+            process = max(ready_queue, key=lambda x: x[1])
+            pid_idx = processes.index(process)
+            executed_order.append(process[0])
+
+            exec_time = min(time_quantum, remaining_queue[pid_idx])
+            remaining_queue[pid_idx] -= exec_time
+            time += exec_time
+
+            if remaining_queue[pid_idx] == 0:
+                completed += 1
+                CT = time
+                TAT = CT - process[2]
+                WT = TAT - process[3]
+                results.append([process[0], process[1], process[2], process[3], CT, TAT, WT])
+        else:
+            time += 1
+
+    print("\nExecution Order:", " → ".join(map(str, executed_order)))
+
+    # Print results
+    print("\nPID\tPR\tAT\tBT\tCT\tTAT\tWT")
+    for p in sorted(results, key=lambda x: x[0]):
+        print(f"{p[0]}\t{p[1]}\t{p[2]}\t{p[3]}\t{p[4]}\t{p[5]}\t{p[6]}")
+
+priority_scheduling(process_list, 2)
