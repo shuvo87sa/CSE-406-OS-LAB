@@ -1,0 +1,59 @@
+from queue import PriorityQueue
+
+def get_process_input():
+    processes = []
+    n = int(input("Enter the number of processes: "))
+    for i in range(n):
+        pid = i + 1
+        priority = int(input(f"Enter priority for process {pid}: "))
+        at = int(input(f"Enter arrival time for process {pid}: "))
+        bt = int(input(f"Enter burst time for process {pid}: "))
+        #
+        processes.append([pid, priority, at, bt, bt, 0, 0, 0])  
+    return processes
+
+def priority_scheduling(processes, time_quantum):
+    processes.sort(key=lambda x: (x[2], -x[1]))  #  Time, TARPOR Priority
+    pq = PriorityQueue()  
+    time = 0
+    index = 0
+    completed = 0
+    n = len(processes)
+    sequence = []  
+    
+    while completed < n:
+        while index < n and processes[index][2] <= time:
+            pq.put((-processes[index][1], index))  # Add process to queue (negative priority for max-heap) KORECHII
+            index += 1
+        
+        if not pq.empty():
+            _, idx = pq.get()   
+            proc = processes[idx]
+            execution_time = min(proc[4], time_quantum)
+            time += execution_time
+            proc[4] -= execution_time
+            sequence.append(proc[0])
+            
+            if proc[4] == 0:  
+                proc[5] = time  
+                proc[6] = proc[5] - proc[2]  
+                proc[7] = proc[6] - proc[3]  
+                completed += 1
+            else:
+                while index < n and processes[index][2] <= time:
+                    pq.put((-processes[index][1], index))
+                    index += 1
+                pq.put((-proc[1], idx))
+        else:
+            time += 1
+
+    print("PID  Priority  AT  BT  CT  TAT  WT")
+    for p in sorted(processes, key=lambda x: x[0]):
+        print(f"{p[0]:3}  {p[1]:8}  {p[2]:2}  {p[3]:2}  {p[5]:2}  {p[6]:3}  {p[7]:3}")
+    
+    print("\nExecution Sequence:", " -> ".join(map(str, sequence)))
+
+if __name__ == "__main__":
+    processes = get_process_input()
+    time_quantum = int(input("Enter time quantum: "))
+    priority_scheduling(processes, time_quantum)
