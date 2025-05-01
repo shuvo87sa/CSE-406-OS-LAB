@@ -1,0 +1,21 @@
+def lru_replacement(ref_str, frame_limit):
+    memory = []
+    faults = 0
+
+    for pg in ref_str:
+        if pg not in memory:
+            faults += 1
+            if len(memory) == frame_limit:
+                memory.pop(0)  # Evict least recently used
+        else:
+            memory.remove(pg)  # Move the page to the most recent position
+        memory.append(pg)  # Insert at the end (most recently used)
+
+    return faults
+
+# Input data
+pages = [7, 0, 1, 2, 0, 3, 0, 4, 2, 3]
+frame_count = 4
+
+# Run and print result
+print("Page Faults:", lru_replacement(pages, frame_count))
